@@ -835,6 +835,7 @@ class OAuthClient:
         prefer_passwordless_login=False,
         allow_phone_verification=True,
         force_new_browser=False,
+        screen_hint="login",
         complete_about_you_if_needed=False,
         first_name="",
         last_name="",
@@ -856,6 +857,7 @@ class OAuthClient:
             prefer_passwordless_login: 是否强制走 passwordless OTP 链路
             allow_phone_verification: add_phone 后是否允许进入手机号验证码分支
             complete_about_you_if_needed: 命中 about_you 后是否自动提交资料完成注册
+            screen_hint: authorize/continue 的 screen_hint（login/signup）
             first_name: about_you 名字
             last_name: about_you 姓氏
             birthdate: about_you 生日，格式 YYYY-MM-DD
@@ -876,7 +878,8 @@ class OAuthClient:
             f"prefer_passwordless_login={'on' if prefer_passwordless_login else 'off'}, "
             f"allow_phone_verification={'on' if allow_phone_verification else 'off'}, "
             f"complete_about_you_if_needed={'on' if complete_about_you_if_needed else 'off'}, "
-            f"force_new_browser={'on' if force_new_browser else 'off'}"
+            f"force_new_browser={'on' if force_new_browser else 'off'}, "
+            f"screen_hint={screen_hint or 'login'}"
         )
 
         if force_new_browser:
@@ -932,7 +935,7 @@ class OAuthClient:
             impersonate=impersonate,
             authorize_url=authorize_url,
             authorize_params=authorize_params,
-            screen_hint="login",
+            screen_hint=str(screen_hint or "login"),
         )
         if not state:
             if not self.last_error:

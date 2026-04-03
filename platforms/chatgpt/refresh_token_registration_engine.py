@@ -444,6 +444,11 @@ class RefreshTokenRegistrationEngine:
                     oauth_client = self._build_oauth_client()
                     self._log("3. 新开 OAuth session，按 screen_hint=login + passwordless OTP 登录...")
                     self._log("4. 若命中 about_you，则在 OAuth 会话内提交姓名+生日，再继续 workspace/token")
+                    oauth_screen_hint = "login"
+                    if registration_message == "pending_about_you_submission":
+                        oauth_screen_hint = "signup"
+                        self._log("OAuth 使用 screen_hint=signup 以恢复未完成的 about_you")
+
                     tokens = oauth_client.login_and_get_tokens(
                         result.email,
                         self.password,
@@ -455,6 +460,7 @@ class RefreshTokenRegistrationEngine:
                         prefer_passwordless_login=True,
                         allow_phone_verification=False,
                         force_new_browser=True,
+                        screen_hint=oauth_screen_hint,
                         complete_about_you_if_needed=True,
                         first_name=first_name,
                         last_name=last_name,
